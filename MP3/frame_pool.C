@@ -1,5 +1,6 @@
 #include "frame_pool.H"
 #include "console.H"
+#include "utils.H"
 
 FramePool::FramePool(unsigned long _base_frame_no, unsigned long _nframes, unsigned long _info_frame_no)
 {

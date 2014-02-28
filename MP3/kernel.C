@@ -133,7 +133,7 @@ int main() {
 
     PageTable::enable_paging();
 
-    //VMPool code_pool(512 MB, 256 MB, &kernel_mem_pool, &pt1);
+    VMPool code_pool(512 MB, 256 MB, &kernel_mem_pool, &pt1);
     //VMPool heap_pool(1 GB, 256 MB, &kernel_mem_pool, &pt1);
 
     /* -- INITIALIZE THE TIMER (we use a very simple timer).-- */
@@ -151,7 +151,7 @@ int main() {
 
     /* -- MOST OF WHAT WE NEED IS SETUP. THE KERNEL CAN START. */
 
-    Console::puts("Hello World!\n");
+    Console::puts("\n\nHello World!\n");
 
     /* -- GENERATE MEMORY REFERENCES */
 
@@ -164,10 +164,12 @@ int main() {
 
     int *foo = (int*)0x500000;
     foo[0] = 3;
-    foo[1024] = 4;
-    if(foo[1024] == 4 && foo[0] == 3)
-      Console::puts("\nTEST PASSED");
+    pt1.free_page((unsigned long)0x500000);
 
+    //foo[1024] = 4;
+    //if(foo[1024] == 4 && foo[0] == 3)
+    //  Console::puts("\nTEST PASSED");
+    
 
     //TestPassed();
 }

@@ -105,10 +105,14 @@ void PageTable::handle_fault(REGS* _r)
     unsigned long new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_directory[pd_offset] = new_frame | 3;
 
-    new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
-    v_page_table = (unsigned long*)(0xFFC00000 + pd_offset*PAGE_SIZE);
+    //
+    unsigned long abc = process_mem_pool->get_frame();
+    Console::puts("\nGot phys frame number: ");
+    Console::puti(abc);
+    //
     
-    //page_table = (unsigned long*)(v_page_directory[pd_offset] & 0xFFFFF000); //masking the LSB 12 bits to get the boundary address 
+    new_frame = process_mem_pool->get_frame_address(abc);
+    v_page_table = (unsigned long*)(0xFFC00000 + pd_offset*PAGE_SIZE);
     
     for(int i=0; i<ENTRIES_PER_PAGE; i++)
       v_page_table[i] = 0 | 2; //pages not present
@@ -133,11 +137,28 @@ void PageTable::init_paging(FramePool *_kernel, FramePool *_process, const unsig
   shared_size = _shared_size;
 }
 
+
+/* frees a page and releases the corresponding frame if the page is valid
+ * input: _page_no, the virtual address of the page to be freed
+ */
 void PageTable::free_page(unsigned long _page_no)
 {
-  ;
+  //TODO: check if page is valid
+
+  int pd_index = _page_no >> 22;
+  int pt_index = (_page_no >> 12) & 0x03FF;
+  unsigned long* v_page_table = (unsigned long*)(0xFFC00000 + pd_index*PAGE_SIZE);
+  unsigned long frame_address = v_page_table[pt_index];
+  
+  Console::puts("\nGoing to free the frame: ");
+  Console::puti(frame_address >> 12);
+  process_mem_pool->release_frame(frame_address >> 12);
 }
 
+
+/* registers a VMPool with this PageTable object 
+ * input: pointer to the VMPool object to be registered
+ */
 void PageTable::register_vmpool(VMPool* _pool)
 {
   //The frame in which the bitmap for the kernel pool resides, contains nothing other than the bitmap
