@@ -90,5 +90,8 @@ public:
   void release_frame(unsigned long _frame_no);
   /* Releases frame back to the given frame pool.
      The frame is identified by the frame number. */
+
+  unsigned char* get_bitmap_address();
+  /* Returns a pointer to this pool's bitmap location */
 };
 #endif

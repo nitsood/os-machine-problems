@@ -44,6 +44,9 @@ PageTable::PageTable()
   //rest of the page directory entries (1-1022) point to absent page tables
   for(i=1; i<=ENTRIES_PER_PAGE-2; i++)
     page_directory[i] = 0 | 2;
+
+  //number of virtual memory pools registered
+  num_pools = 0;
 }
 
 void PageTable::load()
@@ -135,7 +138,51 @@ void PageTable::free_page(unsigned long _page_no)
   ;
 }
 
-void register_vmpool(VMPool *_pool)
+void PageTable::register_vmpool(VMPool* _pool)
 {
-  ;
+  //The frame in which the bitmap for the kernel pool resides, contains nothing other than the bitmap
+  //itself, which occupies only 64 bytes, meaning the rest of that frame is free
+  //Thus, we decided to use the rest of the space in that frame to store the list of references to the VMPool objects
+  
+  unsigned char* frame_bitmap_location = kernel_mem_pool->get_bitmap_address();
+  unsigned char* t = &frame_bitmap_location[64];
+
+  if(t[0] != 0)
+  { 
+    Console::puts("Programmatic error, this byte should be zero but it's not.\n");
+    abort();
+  } 
+
+  //now t points to the end of the bitmap, and beginning of the virtual memory pool list
+  VMPool** registered_pools = (VMPool**)t;
+  registered_pools[num_pools] = _pool;
+  num_pools++;
+
+  /*VMPool* ret = registered_pools[0];
+  Console::puts("\nafter retrieving: ");
+  Console::puti(ret->x);
+  Console::puts("\n");
+  */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

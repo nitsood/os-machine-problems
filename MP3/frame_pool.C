@@ -17,7 +17,7 @@ FramePool::FramePool(unsigned long _base_frame_no, unsigned long _nframes, unsig
     //reserve the first frame for the bitmap itself; and 
     //set the rest to be 'usable'
     frame_bitmap[0] = (unsigned char)0x01;
-    for(int i=1; i<nframes; i++)
+    for(int i=1; i<nframes/8; i++)
       frame_bitmap[i] = 0; 
   }
   else if(_base_frame_no == 1024) //process mem pool
@@ -30,7 +30,7 @@ FramePool::FramePool(unsigned long _base_frame_no, unsigned long _nframes, unsig
     frame_bitmap = (unsigned char*)(x+((_info_frame_no-512)<<12));
     
     //the bitmap frame was already marked used when the info frame was requested in the kernel; all the frames in process pool as of now are usable 
-    for(int i=0; i<nframes; i++)
+    for(int i=0; i<nframes/8; i++)
       frame_bitmap[i] = 0; 
   }    
 }
@@ -86,4 +86,9 @@ void FramePool::release_frame(unsigned long _frame_no)
   int bit_ctr = _frame_no%8;
   unsigned char bits8 = frame_bitmap[byte_ctr];
   bits8 ^= (0x01<<bit_ctr);
+}
+
+unsigned char* FramePool::get_bitmap_address()
+{
+  return frame_bitmap;
 }

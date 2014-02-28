@@ -51,7 +51,8 @@ private:
 
   /* DATA FOR CURRENT PAGE TABLE */
   unsigned long        * page_directory;     /* where is page directory located? */
-
+  unsigned int           num_pools;           /* The number of virtual memory pools registered with this PageTable */
+   
 public:
   static const unsigned int PAGE_SIZE        = FramePool::FRAME_SIZE; /* in bytes */
   static const unsigned int ENTRIES_PER_PAGE = 1024; /* in entries, duh! */
