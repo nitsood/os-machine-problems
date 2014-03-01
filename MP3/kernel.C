@@ -162,20 +162,26 @@ int main() {
     Console::puts("Testing the memory allocation on heap_pool...\n");
     //GenerateMemoryReferences(&heap_pool, 50, 100);
 
-    /*int *foo = (int*)0x500000;
+    //free_page test
+    int *foo = (int*)0x500000;
     foo[0] = 3;
     pt1.free_page((unsigned long)0x500000);
-    */
-    //foo[1024] = 4;
-    //if(foo[1024] == 4 && foo[0] == 3)
-    //  Console::puts("\nTEST PASSED");
     
-    current_pool = &heap_pool;
+
+    //recursive virtual memory test
+    /*foo[1024] = 4;
+    if(foo[1024] == 4 && foo[0] == 3)
+    Console::puts("\nTEST PASSED");
+    */
+    
+    //allocation naive test
+    /*current_pool = &heap_pool;
     unsigned long a = current_pool->allocate((unsigned long)(8 KB));
     a = current_pool->allocate((unsigned long)(4 KB));
     a = current_pool->allocate((unsigned long)(12 KB));
     current_pool->regions();
-    
+    */
+
     //TestPassed();
 }
 
