@@ -201,6 +201,17 @@ void Console::putui(const unsigned int _n) {
   putch('>');
 }
 
+void Console::print_bin(const unsigned char _c)
+{
+  for(int bit_index = 7; bit_index >= 0; --bit_index)
+    puti((_c>> bit_index) & 1);
+}
+
+void Console::print_bin(const unsigned long _l)
+{
+  for(int bit_index = 31; bit_index >= 0; --bit_index)
+    puti((_l>> bit_index) & 1);
+}
 
 /* -- COLOR CONTROL -- */
 void Console::set_TextColor(const unsigned char _forecolor, 
