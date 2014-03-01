@@ -33,6 +33,13 @@
 
 /* Forward declaration of class PageTable */
 class PageTable;
+typedef struct RegionDescriptor {
+  unsigned long base_address;
+  unsigned long size;
+  unsigned char allocated;       //1 for valid, 0 for invalid
+}region_descriptor;
+
+
 
 /*--------------------------------------------------------------------------*/
 /* V M  P o o l  */
@@ -41,7 +48,13 @@ class PageTable;
 class VMPool { /* Virtual Memory Pool */
 private:
    /* -- DEFINE YOUR VIRTUAL MEMORY POOL DATA STRUCTURE(s) HERE. */
-
+   unsigned long base_address;
+   unsigned long size;
+   FramePool *frame_pool;
+   PageTable *page_table;
+   region_descriptor *region_desc_list;
+   unsigned long num_regions;     
+   
 public:
    VMPool(unsigned long _base_address,
           unsigned long _size,
