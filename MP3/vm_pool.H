@@ -54,7 +54,8 @@ private:
    PageTable *page_table;
    region_descriptor *region_desc_list;
    unsigned long num_regions;     
-   
+   unsigned long max_regions;
+ 
 public:
    VMPool(unsigned long _base_address,
           unsigned long _size,

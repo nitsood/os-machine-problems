@@ -13,12 +13,12 @@ VMPool::VMPool(unsigned long _base_address, unsigned long _size, FramePool* _fra
   unsigned long head = frame_pool->get_frame_address(frame_pool->get_frame());
   region_desc_list = (region_descriptor*)head;
   _page_table->register_vmpool(this);
+  unsigned long descriptor_size = sizeof(region_descriptor);
+  max_regions = PageTable::PAGE_SIZE/descriptor_size;
 }
 
 unsigned long VMPool::allocate(unsigned long _size)
 {
-  unsigned long descriptor_size = sizeof(region_descriptor);
-  unsigned long max_regions = PageTable::PAGE_SIZE/descriptor_size;
   unsigned long start_address = 0;
   if (num_regions >= max_regions)
   {
