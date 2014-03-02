@@ -102,6 +102,12 @@ public:
   static void putui(const unsigned int _u);
   /* Display a unsigned integer on the screen.*/
 
+  static void print_bin(const unsigned char _c);
+  /* Print binary representation of a byte */
+
+  static void print_bin(const unsigned long _l);
+  /* Print binary representation of 4 bytes */
+
   static void set_TextColor(unsigned char _fore_color, unsigned char _back_color);
   /* Set the color of the foreground and background. */
 

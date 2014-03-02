@@ -33,11 +33,12 @@
 
 /* Forward declaration of class PageTable */
 class PageTable;
-typedef struct RegionDescriptor {
-  unsigned long base_address;
+
+typedef struct REGION_DESCRIPTOR {
+  unsigned long start_address;
   unsigned long size;
   unsigned char allocated;       //1 for valid, 0 for invalid
-}region_descriptor;
+} region_descriptor;
 
 
 
@@ -83,6 +84,9 @@ public:
    BOOLEAN is_legitimate(unsigned long _address);
    /* Returns FALSE if the address is not valid. An address is not valid
     * if it is not part of a region that is currently allocated. */
+
+   /* Temporary method for debugging */
+   void regions();
 };
 
 #endif

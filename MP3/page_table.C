@@ -143,8 +143,6 @@ void PageTable::init_paging(FramePool *_kernel, FramePool *_process, const unsig
  */
 void PageTable::free_page(unsigned long _page_no)
 {
-  //TODO: check if page is valid
-
   int pd_index = _page_no >> 22;
   int pt_index = (_page_no >> 12) & 0x03FF;
   unsigned long* v_page_table = (unsigned long*)(0xFFC00000 + pd_index*PAGE_SIZE);
@@ -167,12 +165,6 @@ void PageTable::register_vmpool(VMPool* _pool)
   
   unsigned char* frame_bitmap_location = kernel_mem_pool->get_bitmap_address();
   unsigned char* t = &frame_bitmap_location[64];
-
-  if(t[0] != 0)
-  { 
-    Console::puts("Programmatic error, this byte should be zero but it's not.\n");
-    abort();
-  } 
 
   //now t points to the end of the bitmap, and beginning of the virtual memory pool list
   VMPool** registered_pools = (VMPool**)t;
