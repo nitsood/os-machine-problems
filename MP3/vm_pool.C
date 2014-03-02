@@ -22,17 +22,11 @@ VMPool::VMPool(unsigned long _base_address, unsigned long _size, FramePool* _fra
 
 unsigned long VMPool::allocate(unsigned long _size)
 {
-<<<<<<< HEAD
-=======
   if(_size == 0)
   {
     Console::puts("\nRequested size allocation is 0, nothing to be done.");
     return 0;
   }
-
-  unsigned long descriptor_size = sizeof(region_descriptor);
-  unsigned long max_regions = PageTable::PAGE_SIZE/descriptor_size;
->>>>>>> f941e7ec1f9c00422584d5c859f5886622f47f98
   unsigned long start_address = 0;
   unsigned long required_pages = _size;
 
