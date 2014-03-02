@@ -160,7 +160,7 @@ int main() {
     Console::puts("Testing the memory allocation on code_pool...\n");
     //GenerateMemoryReferences(&code_pool, 50, 100);
     Console::puts("Testing the memory allocation on heap_pool...\n");
-    //GenerateMemoryReferences(&heap_pool, 50, 100);
+    //GenerateMemoryReferences(&heap_pool, 10, 100);
 
     //free_page test
     /*int *foo = (int*)0x500000;
@@ -182,7 +182,12 @@ int main() {
     current_pool->regions();
     current_pool->release(c);
     current_pool->regions();
-
+    Console::puts("\nLegitimate   ");
+    c = 0x40002004;
+    Console::puti(current_pool->is_legitimate(c));
+    c = 0x40004000;
+    Console::puts(" ");
+    Console::puti(current_pool->is_legitimate(c));
     //TestPassed();
 }
 
@@ -191,7 +196,7 @@ void GenerateMemoryReferences(VMPool *pool, int size1, int size2)
    current_pool = pool;
    for(int i=1; i<size1; i++) {
       int *arr = new int[size2 * i];
-      if(pool->is_legitimate((unsigned long)arr) == FALSE) {
+      /*if(pool->is_legitimate((unsigned long)arr) == FALSE) {
          TestFailed();
       }
       for(int j=0; j<size2*i; j++) {
@@ -202,7 +207,7 @@ void GenerateMemoryReferences(VMPool *pool, int size1, int size2)
             TestFailed();
          }
       }
-      delete arr;
+      delete arr;*/
    }
 }
 

@@ -20,10 +20,17 @@ VMPool::VMPool(unsigned long _base_address, unsigned long _size, FramePool* _fra
 
 unsigned long VMPool::allocate(unsigned long _size)
 {
+  if(_size == 0)
+  {
+    Console::puts("\nRequested size allocation is 0, nothing to be done.");
+    return 0;
+  }
+
   unsigned long descriptor_size = sizeof(region_descriptor);
   unsigned long max_regions = PageTable::PAGE_SIZE/descriptor_size;
   unsigned long start_address = 0;
-  
+  unsigned long required_pages = _size;
+
   if(num_regions >= max_regions)
   {
     //Unable to assign regions as desc_list is full;
@@ -34,7 +41,19 @@ unsigned long VMPool::allocate(unsigned long _size)
     start_address = base_address;
   else
     start_address = region_desc_list[num_regions-1].start_address + region_desc_list[num_regions-1].size;
-  
+ 
+  if((_size % PageTable::PAGE_SIZE) == 0)
+    required_pages = _size/PageTable::PAGE_SIZE;
+  else
+    required_pages = ((int)_size/PageTable::PAGE_SIZE) + 1; //ceil
+
+  Console::puts("\nrequired size: ");
+  Console::puti(_size);
+  Console::puts(" and num pages: ");
+  Console::puti(required_pages);
+
+  //return 0;
+
   region_desc_list[num_regions].start_address = start_address;
   region_desc_list[num_regions].size = _size;
   region_desc_list[num_regions].allocated = 1;
@@ -80,7 +99,10 @@ BOOLEAN VMPool::is_legitimate(unsigned long _address)
 {
   for(int i=0; i<num_regions; i++)
   {
-    if((region_desc_list[i].start_address <= _address) && (_address < (region_desc_list[i].start_address+region_desc_list[i].size)))
+    if((region_desc_list[i].start_address <= _address) && 
+       (_address < (region_desc_list[i].start_address+region_desc_list[i].size)) &&
+       region_desc_list[i].allocated == 1
+      )
       return true;
   }
   
