@@ -3,6 +3,7 @@
 #include "console.H"
 #include "utils.H"
 
+
 VMPool::VMPool(unsigned long _base_address, unsigned long _size, FramePool* _frame_pool, PageTable* _page_table)
 {
   base_address = _base_address;
@@ -16,11 +17,13 @@ VMPool::VMPool(unsigned long _base_address, unsigned long _size, FramePool* _fra
   _page_table->register_vmpool(this);
 }
 
+
 unsigned long VMPool::allocate(unsigned long _size)
 {
   unsigned long descriptor_size = sizeof(region_descriptor);
   unsigned long max_regions = PageTable::PAGE_SIZE/descriptor_size;
   unsigned long start_address = 0;
+  
   if(num_regions >= max_regions)
   {
     //Unable to assign regions as desc_list is full;
@@ -30,9 +33,9 @@ unsigned long VMPool::allocate(unsigned long _size)
   if(num_regions == 0)
     start_address = base_address;
   else
-    start_address = region_desc_list[num_regions-1].base_address + region_desc_list[num_regions-1].size;
+    start_address = region_desc_list[num_regions-1].start_address + region_desc_list[num_regions-1].size;
   
-  region_desc_list[num_regions].base_address = start_address;
+  region_desc_list[num_regions].start_address = start_address;
   region_desc_list[num_regions].size = _size;
   region_desc_list[num_regions].allocated = 1;
   num_regions++;
@@ -40,14 +43,44 @@ unsigned long VMPool::allocate(unsigned long _size)
   return start_address;
 }
 
+
 void VMPool::release(unsigned long _start_address)
-{}
+{
+  //find the descriptor of the region to be released
+  int i = 0;
+  for(; i<num_regions; i++)
+  {
+    if(region_desc_list[i].start_address == _start_address)
+      break;
+  }
+
+  if(i >= num_regions)
+  {
+    Console::puts("\nTrying to release a memory region that was not allocated previously");
+    abort();
+  }
+ 
+  region_descriptor* u_region = &region_desc_list[i];
+  unsigned long page_address = _start_address;
+  for(i=0; i<(u_region->size/PageTable::PAGE_SIZE); i++)
+  {
+    //free each page in the region one by one
+    //page_table->free_page(page_address);
+    Console::puts("\nGoing to free the page: ");
+    Console::putui(page_address);
+    page_address += PageTable::PAGE_SIZE;
+  }
+  
+  //mark the region as 'unallocated' in the region descriptor list using a flag in the descriptor
+  u_region->allocated = 0;
+}
+
 
 BOOLEAN VMPool::is_legitimate(unsigned long _address)
 {
-  for(int i=0;i<num_regions;i++)
+  for(int i=0; i<num_regions; i++)
   {
-    if (region_desc_list[i].base_address<=_address && _address<region_desc_list[i].base_address+region_desc_list[i].size)
+    if((region_desc_list[i].start_address <= _address) && (_address < (region_desc_list[i].start_address+region_desc_list[i].size)))
       return true;
   }
   
@@ -63,8 +96,10 @@ void VMPool::regions()
     Console::puts("\n\nRegion: ");
     Console::puti(i+1);
     Console::puts("\n");
-    Console::putui(region_desc_list[i].base_address);
-    Console::puts("\n");
+    Console::putui(region_desc_list[i].start_address);
+    Console::puts(" ");
     Console::putui(region_desc_list[i].size);
+    Console::puts(" ");
+    Console::puti((int)region_desc_list[i].allocated);
   }
 }

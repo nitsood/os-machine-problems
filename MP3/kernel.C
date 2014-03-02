@@ -163,10 +163,10 @@ int main() {
     //GenerateMemoryReferences(&heap_pool, 50, 100);
 
     //free_page test
-    int *foo = (int*)0x500000;
+    /*int *foo = (int*)0x500000;
     foo[0] = 3;
     pt1.free_page((unsigned long)0x500000);
-    
+    */
 
     //recursive virtual memory test
     /*foo[1024] = 4;
@@ -175,12 +175,13 @@ int main() {
     */
     
     //allocation naive test
-    /*current_pool = &heap_pool;
+    current_pool = &heap_pool;
     unsigned long a = current_pool->allocate((unsigned long)(8 KB));
-    a = current_pool->allocate((unsigned long)(4 KB));
-    a = current_pool->allocate((unsigned long)(12 KB));
+    unsigned long b = current_pool->allocate((unsigned long)(4 KB));
+    unsigned long c = current_pool->allocate((unsigned long)(12 KB));
     current_pool->regions();
-    */
+    current_pool->release(c);
+    current_pool->regions();
 
     //TestPassed();
 }
