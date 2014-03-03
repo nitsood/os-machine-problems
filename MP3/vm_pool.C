@@ -36,11 +36,13 @@ unsigned long VMPool::allocate(unsigned long _size)
     return 0;
   }
 
+  //calculate the start address
   if(num_regions == 0)
     start_address = base_address;
   else
     start_address = region_desc_list[num_regions-1].start_address + region_desc_list[num_regions-1].size;
  
+  //calculate how many virtual memory pages will be required
   if((_size % PageTable::PAGE_SIZE) == 0)
     required_pages = _size/PageTable::PAGE_SIZE;
   else
@@ -50,11 +52,10 @@ unsigned long VMPool::allocate(unsigned long _size)
   Console::puti(_size);
   Console::puts(" and num pages: ");
   Console::puti(required_pages);
-
-  //return 0;
+  Console::puts("\n");
 
   region_desc_list[num_regions].start_address = start_address;
-  region_desc_list[num_regions].size = _size;
+  region_desc_list[num_regions].size = required_pages * PageTable::PAGE_SIZE;
   region_desc_list[num_regions].allocated = 1;
   num_regions++;
   
@@ -83,9 +84,9 @@ void VMPool::release(unsigned long _start_address)
   for(i=0; i<(u_region->size/PageTable::PAGE_SIZE); i++)
   {
     //free each page in the region one by one
-    //page_table->free_page(page_address);
     Console::puts("\nGoing to free the page: ");
     Console::putui(page_address);
+    page_table->free_page(page_address);
     page_address += PageTable::PAGE_SIZE;
   }
   

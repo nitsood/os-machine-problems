@@ -77,16 +77,6 @@ void PageTable::handle_fault(REGS* _r)
 
   //page directory must be accessed via virtual memory
   unsigned long* v_page_directory = (unsigned long*)0xFFFFF000; //top 4KB of virtual address space
-
-  //we don't handle the page fault if the address is beyond 32MB, thus not managed by first 8 page tables; in this case the address itself is invalid
-  if(pd_offset > 7)
-  {
-    Console::puts("\nInvalid memory reference higher than 32MB: ");
-    Console::putui(fault_addr);
-    abort();
-  }
-
-  unsigned long* page_table = 0;
   unsigned long* v_page_table = 0;
 
   //first check if the PDE is valid
