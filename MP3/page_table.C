@@ -137,7 +137,9 @@ void PageTable::free_page(unsigned long _page_no)
   int pt_index = (_page_no >> 12) & 0x03FF;
   unsigned long* v_page_table = (unsigned long*)(0xFFC00000 + pd_index*PAGE_SIZE);
   unsigned long frame_address = v_page_table[pt_index];
-  
+  //mark the page invalid
+  v_page_table[pt_index] |= 3;
+  //release the frame
   Console::puts("\nGoing to free the frame: ");
   Console::puti(frame_address >> 12);
   process_mem_pool->release_frame(frame_address >> 12);
