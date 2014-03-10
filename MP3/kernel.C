@@ -158,38 +158,10 @@ int main() {
     Console::puts("I am starting with an extensive test of the memory allocator.\n");
     Console::puts("Please be patient...\n");
     Console::puts("Testing the memory allocation on code_pool...\n");
-    //GenerateMemoryReferences(&code_pool, 50, 100);
+    GenerateMemoryReferences(&code_pool, 50, 100);
     Console::puts("Testing the memory allocation on heap_pool...\n");
     GenerateMemoryReferences(&heap_pool, 50, 100);
 
-    //free_page test
-    /*int *foo = (int*)0x500000;
-    foo[0] = 3;
-    pt1.free_page((unsigned long)0x500000);
-    */
-
-    //recursive virtual memory test
-    /*foo[1024] = 4;
-    if(foo[1024] == 4 && foo[0] == 3)
-    Console::puts("\nTEST PASSED");
-    */
-    
-    //allocation naive test
-    /*current_pool = &heap_pool;
-    unsigned long a = current_pool->allocate((unsigned long)(8 KB));
-    unsigned long b = current_pool->allocate((unsigned long)(4 KB));
-    unsigned long c = current_pool->allocate((unsigned long)(12 KB));
-    current_pool->regions();
-    current_pool->release(c);
-    current_pool->regions();
-    Console::puts("\nLegitimate   ");
-    c = 0x40002004;
-    Console::puti(current_pool->is_legitimate(c));
-    c = 0x40004000;
-    Console::puts(" ");
-    Console::puti(current_pool->is_legitimate(c));
-    */
-    
     TestPassed();
 }
 
@@ -197,7 +169,9 @@ void GenerateMemoryReferences(VMPool *pool, int size1, int size2)
 {
    current_pool = pool;
    for(int i=1; i<size1; i++) {
-      int *arr = new int[size2 * i];
+     //Console::puts("\nAllocating region ");
+     //Console::puti(i);
+     int *arr = new int[size2 * i];
       if(pool->is_legitimate((unsigned long)arr) == FALSE) {
          TestFailed();
       }

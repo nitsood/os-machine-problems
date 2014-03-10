@@ -70,7 +70,9 @@ void PageTable::handle_fault(REGS* _r)
   }
 
   unsigned long fault_addr = read_cr2();
-  
+  //Console::puts("\n");
+  //Console::putui(fault_addr);
+
   //obtain offsets
   int pd_offset = fault_addr >> 22;
   int pt_offset = (fault_addr >> 12) & 0x03FF;
@@ -86,22 +88,16 @@ void PageTable::handle_fault(REGS* _r)
     //
     //in this case we need to assign a page to store the new page table first, else it will cause cyclic infinite page faults; the frame should be taken from the process memory pool, and then we take a frame from the process memory pool and assign the page containing the faulted address to this new frame
     
-    Console::puts("\nOffsets: ");
-    Console::puti(pd_offset);
-    Console::puts(" ");
-    Console::puti(pt_offset);
-    Console::puts("\ncaught a pg fault, missing page table");
+    //Console::puts("\nOffsets: ");
+    //Console::puti(pd_offset);
+    //Console::puts(" ");
+    //Console::puti(pt_offset);
+    //Console::puts("\ncaught a pg fault, missing page table");
     
     unsigned long new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_directory[pd_offset] = new_frame | 3;
 
-    //
-    unsigned long abc = process_mem_pool->get_frame();
-    Console::puts("\nGot phys frame number: ");
-    Console::puti(abc);
-    //
-    
-    new_frame = process_mem_pool->get_frame_address(abc);
+    new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_table = (unsigned long*)(0xFFC00000 + pd_offset*PAGE_SIZE);
     
     for(int i=0; i<ENTRIES_PER_PAGE; i++)
@@ -112,7 +108,7 @@ void PageTable::handle_fault(REGS* _r)
   else
   {
     //here the page table page is already known, already initialized previously; we just need to find a new frame from the process pool for the new page
-    Console::puts("\ncaught a pg fault, missing page only");
+    //Console::puts("\ncaught a pg fault, missing page only");
 
     unsigned long new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_table = (unsigned long*)(0xFFC00000 + pd_offset*PAGE_SIZE);
@@ -137,11 +133,13 @@ void PageTable::free_page(unsigned long _page_no)
   int pt_index = (_page_no >> 12) & 0x03FF;
   unsigned long* v_page_table = (unsigned long*)(0xFFC00000 + pd_index*PAGE_SIZE);
   unsigned long frame_address = v_page_table[pt_index];
+  
   //mark the page invalid
-  v_page_table[pt_index] |= 3;
+  v_page_table[pt_index] = 0 | 2;
+  
   //release the frame
-  Console::puts("\nGoing to free the frame: ");
-  Console::puti(frame_address >> 12);
+  //Console::puts("\nGoing to free the frame: ");
+  //Console::puti(frame_address >> 12);
   process_mem_pool->release_frame(frame_address >> 12);
 }
 
@@ -169,25 +167,3 @@ void PageTable::register_vmpool(VMPool* _pool)
   Console::puts("\n");
   */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

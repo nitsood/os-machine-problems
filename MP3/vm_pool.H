@@ -50,6 +50,7 @@ class VMPool { /* Virtual Memory Pool */
 private:
    /* -- DEFINE YOUR VIRTUAL MEMORY POOL DATA STRUCTURE(s) HERE. */
    unsigned long base_address;
+   unsigned long next_start_address;
    unsigned long size;
    FramePool *frame_pool;
    PageTable *page_table;

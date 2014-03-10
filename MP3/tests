@@ -1,0 +1,37 @@
+//free_page test
+    /*int *foo = (int*)0x500000;
+    foo[0] = 3;
+    pt1.free_page((unsigned long)0x500000);
+    */
+
+    //recursive virtual memory test
+    /*foo[1024] = 4;
+    if(foo[1024] == 4 && foo[0] == 3)
+    Console::puts("\nTEST PASSED");
+    */
+
+    //allocation naive test
+    /*current_pool = &heap_pool;
+    unsigned long a = current_pool->allocate((unsigned long)(8 KB));
+    unsigned long* aptr = (unsigned long*)a;
+    aptr[0] = 3;
+    aptr[1024] = 3; //using second page also
+    unsigned long b = current_pool->allocate((unsigned long)(4 KB));
+    unsigned long* bptr = (unsigned long*)b;
+    bptr[0] = 4;
+    //unsigned long c = current_pool->allocate((unsigned long)(12 KB));
+    //current_pool->regions();
+    current_pool->release(a);
+    a = current_pool->allocate((unsigned long)(4 KB));
+    aptr = (unsigned long*)a;
+    aptr[0] = 5;
+    */
+    //current_pool->regions();
+    /*Console::puts("\nLegitimate   ");
+    c = 0x40002004;
+    Console::puti(current_pool->is_legitimate(c));
+    c = 0x40004000;
+    Console::puts(" ");
+    Console::puti(current_pool->is_legitimate(c));
+    */
+
