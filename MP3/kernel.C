@@ -137,8 +137,8 @@ int main() {
     VMPool heap_pool(1 GB, 256 MB, &kernel_mem_pool, &pt1);
 
     /* -- INITIALIZE THE TIMER (we use a very simple timer).-- */
-    //SimpleTimer::init(100); /* timer ticks every 10ms. */
-    //register_interrupt_handler(0, SimpleTimer::handler);
+    SimpleTimer::init(100); /* timer ticks every 10ms. */
+    register_interrupt_handler(0, SimpleTimer::handler);
 
     /* NOTE: The timer chip starts periodically firing as
              soon as we enable interrupts.
@@ -147,11 +147,11 @@ int main() {
 
     /* -- ENABLE INTERRUPTS -- */
 
-    //__asm__ __volatile__ ("sti");
+    __asm__ __volatile__ ("sti");
 
     /* -- MOST OF WHAT WE NEED IS SETUP. THE KERNEL CAN START. */
 
-    Console::puts("\n\nHello World!\n");
+    Console::puts("Hello World!\n");
 
     /* -- GENERATE MEMORY REFERENCES */
 
@@ -162,16 +162,14 @@ int main() {
     Console::puts("Testing the memory allocation on heap_pool...\n");
     GenerateMemoryReferences(&heap_pool, 50, 100);
 
-    TestPassed();
+   TestPassed();
 }
 
 void GenerateMemoryReferences(VMPool *pool, int size1, int size2)
 {
    current_pool = pool;
    for(int i=1; i<size1; i++) {
-     //Console::puts("\nAllocating region ");
-     //Console::puti(i);
-     int *arr = new int[size2 * i];
+      int *arr = new int[size2 * i];
       if(pool->is_legitimate((unsigned long)arr) == FALSE) {
          TestFailed();
       }
@@ -185,17 +183,16 @@ void GenerateMemoryReferences(VMPool *pool, int size1, int size2)
       }
       delete arr;
    }
-   //current_pool->regions();
 }
 
 void TestFailed()
 {
-   Console::puts("\nTest Failed\n");
+   Console::puts("Test Failed\n");
    for(;;);
 }
 
 void TestPassed()
 {
-   Console::puts("\nTest Passed! Congratulations!\n");
+   Console::puts("Test Passed! Congratulations!\n");
    for(;;);
 }

@@ -26,25 +26,17 @@ unsigned long VMPool::allocate(unsigned long _size)
 {
   if(_size == 0)
   {
-    //Console::puts("\nRequested size allocation is 0, nothing to be done.");
+    Console::puts("\nRequested size allocation is 0, nothing to be done.");
     return 0;
   }
   
-  //unsigned long start_address = 0;
   unsigned long required_pages = _size;
 
   if(num_regions >= max_regions)
   {
-    //Unable to assign regions as desc_list is full;
+    Console::puts("\nUnable to assign regions as descriptor list is full");
     return 0;
   }
-
-  //calculate the start address
-  /*if(num_regions == 0)
-    start_address = next_start_address;
-  else
-    start_address = region_desc_list[num_regions-1].start_address + region_desc_list[num_regions-1].size;
-  */
 
   //calculate how many virtual memory pages will be required
   if((_size % PageTable::PAGE_SIZE) == 0)
@@ -52,19 +44,12 @@ unsigned long VMPool::allocate(unsigned long _size)
   else
     required_pages = ((int)_size/PageTable::PAGE_SIZE) + 1; //ceil
 
-  /*Console::puts("\nrequired size: ");
-  Console::puti(_size);
-  Console::puts(" and num pages: ");
-  Console::puti(required_pages);
-  Console::puts("\n");*/
-  
   //traverse the region descriptor list
   for(int i=0; i<num_regions; i++)
   {
     //1. check if any previously de-allocated region can fit the requirement
     if((region_desc_list[i].size >= _size) && !region_desc_list[i].allocated)
     {
-      //Console::puts("\nOld region\n");
       unsigned long fragmented_size = region_desc_list[i].size/PageTable::PAGE_SIZE - required_pages;
       region_desc_list[i].size = required_pages * PageTable::PAGE_SIZE;
       region_desc_list[i].allocated = 1;
@@ -83,7 +68,6 @@ unsigned long VMPool::allocate(unsigned long _size)
   }
 
   //if no unallocated region could be re-used, create a new region at the end of the descriptor list
-  //Console::puts("\nNew region");
   unsigned long addr = next_start_address;
   region_desc_list[num_regions].start_address = next_start_address;
   region_desc_list[num_regions].size = required_pages * PageTable::PAGE_SIZE;
@@ -119,8 +103,6 @@ void VMPool::release(unsigned long _start_address)
   for(i=0; i<(u_region->size/PageTable::PAGE_SIZE); i++)
   {
     //free each page in the region one by one
-    //Console::puts("\nGoing to free the page: ");
-    //Console::putui(page_address);
     page_table->free_page(page_address);
     page_address += PageTable::PAGE_SIZE;
   }
@@ -130,7 +112,6 @@ void VMPool::release(unsigned long _start_address)
 
   //after deallocation, we need to reload the page table, so that the TLB is flushed
   page_table->load();
-  //PageTable::enable_paging();
 }
 
 

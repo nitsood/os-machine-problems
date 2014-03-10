@@ -64,8 +64,6 @@ unsigned long FramePool::get_frame()
 
   //set the frame to 'used' before returning its number
   frame_bitmap[byte_ctr] |= (0x01 << zero_bit);
-  //Console::puts("\n--after reserving frame ");
-  //Console::print_bin(frame_bitmap[byte_ctr]);
   return base_frame_no+(8*byte_ctr)+zero_bit;
 }
 
@@ -85,13 +83,9 @@ void FramePool::mark_inaccessible(unsigned long _start_frame, unsigned long _nfr
 void FramePool::release_frame(unsigned long _frame_no)
 {
   //from _frame_no obtain the byte and the bit number to set
-  //Console::puts("\nReleasing frame number: ");
-  //Console::puti(_frame_no);
   int byte_ctr = (_frame_no-base_frame_no)/8;
   int bit_ctr = _frame_no%8;
   frame_bitmap[byte_ctr] ^= (0x01<<bit_ctr);
-  //Console::puts("\n--after releasing frame ");
-  //Console::print_bin(frame_bitmap[byte_ctr]);
 }
 
 unsigned char* FramePool::get_bitmap_address()

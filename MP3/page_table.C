@@ -23,11 +23,6 @@ PageTable::PageTable()
   unsigned long* page_table = (unsigned long*)frame_addr;
   unsigned long addr = 0; //32-bit
   
-  //first page table's page location (frame 515, 0x203000)
-  //frame_addr = kernel_mem_pool->get_frame_address(kernel_mem_pool->get_frame());
-  //unsigned long* page_table = (unsigned long*)frame_addr;
-  //unsigned long addr = 0; //32-bit
-  
   //setting up page table for 0-4MB (direct mapping)
   int i, j;
   for(i=0; i<ENTRIES_PER_PAGE; i++)
@@ -70,8 +65,6 @@ void PageTable::handle_fault(REGS* _r)
   }
 
   unsigned long fault_addr = read_cr2();
-  //Console::puts("\n");
-  //Console::putui(fault_addr);
 
   //obtain offsets
   int pd_offset = fault_addr >> 22;
@@ -87,13 +80,6 @@ void PageTable::handle_fault(REGS* _r)
     //this refers to a new page table
     //
     //in this case we need to assign a page to store the new page table first, else it will cause cyclic infinite page faults; the frame should be taken from the process memory pool, and then we take a frame from the process memory pool and assign the page containing the faulted address to this new frame
-    
-    //Console::puts("\nOffsets: ");
-    //Console::puti(pd_offset);
-    //Console::puts(" ");
-    //Console::puti(pt_offset);
-    //Console::puts("\ncaught a pg fault, missing page table");
-    
     unsigned long new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_directory[pd_offset] = new_frame | 3;
 
@@ -108,8 +94,6 @@ void PageTable::handle_fault(REGS* _r)
   else
   {
     //here the page table page is already known, already initialized previously; we just need to find a new frame from the process pool for the new page
-    //Console::puts("\ncaught a pg fault, missing page only");
-
     unsigned long new_frame = process_mem_pool->get_frame_address(process_mem_pool->get_frame());
     v_page_table = (unsigned long*)(0xFFC00000 + pd_offset*PAGE_SIZE);
     v_page_table[pt_offset] = new_frame | 3; //page containing the faulted address to be marked present
@@ -138,8 +122,6 @@ void PageTable::free_page(unsigned long _page_no)
   v_page_table[pt_index] = 0 | 2;
   
   //release the frame
-  //Console::puts("\nGoing to free the frame: ");
-  //Console::puti(frame_address >> 12);
   process_mem_pool->release_frame(frame_address >> 12);
 }
 
@@ -152,7 +134,6 @@ void PageTable::register_vmpool(VMPool* _pool)
   //The frame in which the bitmap for the kernel pool resides, contains nothing other than the bitmap
   //itself, which occupies only 64 bytes, meaning the rest of that frame is free
   //Thus, we decided to use the rest of the space in that frame to store the list of references to the VMPool objects
-  
   unsigned char* frame_bitmap_location = kernel_mem_pool->get_bitmap_address();
   unsigned char* t = &frame_bitmap_location[64];
 
@@ -160,10 +141,4 @@ void PageTable::register_vmpool(VMPool* _pool)
   VMPool** registered_pools = (VMPool**)t;
   registered_pools[num_pools] = _pool;
   num_pools++;
-
-  /*VMPool* ret = registered_pools[0];
-  Console::puts("\nafter retrieving: ");
-  Console::puti(ret->x);
-  Console::puts("\n");
-  */
 }
