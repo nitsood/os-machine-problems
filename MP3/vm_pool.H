@@ -49,13 +49,29 @@ typedef struct REGION_DESCRIPTOR {
 class VMPool { /* Virtual Memory Pool */
 private:
    /* -- DEFINE YOUR VIRTUAL MEMORY POOL DATA STRUCTURE(s) HERE. */
+   
+   //base virtual address of the vm pool
    unsigned long base_address;
+   
+   //indicates the value of the address at which a new memory region can be 
+   //allocated
    unsigned long next_start_address;
+   
+   //size of the vm pool
    unsigned long size;
    FramePool *frame_pool;
    PageTable *page_table;
+
+   //pointer to the start of the region descriptor list
    region_descriptor *region_desc_list;
+
+   //number of regions currently present in the vm pool, 
+   //this includes both allocated and de-allocated regions
    unsigned long num_regions;     
+
+   //maximum number of regions in this vm pool, this number 
+   //is determined by the upper limit on the number of region descriptors
+   //that can fit in one physical memory frame
    unsigned long max_regions;
  
 public:
@@ -86,7 +102,7 @@ public:
    /* Returns FALSE if the address is not valid. An address is not valid
     * if it is not part of a region that is currently allocated. */
 
-   /* Temporary method for debugging */
+   /* Method for debugging */
    void regions();
 };
 
