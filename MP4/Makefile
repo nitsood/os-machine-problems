@@ -4,7 +4,7 @@ CPP_OPTIONS = -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -fno-exception
 all: kernel.bin
 
 clean:
-	rm -f *.o
+	rm -f *.o kernel.bin
 
 start.o: start.asm gdt_low.asm idt_low.asm irq_low.asm
 	nasm -f elf -o start.o start.asm
