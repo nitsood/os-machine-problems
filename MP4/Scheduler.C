@@ -1,4 +1,5 @@
 #include "Scheduler.H"
+#include "thread.H"
 
 Scheduler::Scheduler()
 {
@@ -29,6 +30,20 @@ void Scheduler::push_thread(Thread* th)
   num_threads++;
 }
 
-Thread* pop_thread();
+Thread* pop_thread()
 {
+  Thread* last;
+  if (num_threads>0)
+  {
+    last = ready_q[0];
+    for(int i=1;i<numthreads;i++)
+    {
+     ready_q[i-1]=ready_q[i];
+    }
+  }
+  else
+  {
+    last = NULL;
+  }
+  return last;
 }
