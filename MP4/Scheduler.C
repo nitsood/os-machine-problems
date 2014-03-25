@@ -37,11 +37,13 @@ Thread* pop_thread()
   if (num_threads>0)
   {
     last = ready_q[0];
-    for(int i=1;i<numthreads;i++)
+    for(int i=1;i<num_threads;i++)
     {
-     memset(ready_q[i1], 0, sizeof(Thread*));
+     memset(ready_q[i-1], 0, sizeof(Thread*));
      memcpy(ready_q[i-1], ready_q[i], sizeof(Thread*));
     }
+    memset(ready_q[num_threads-1], 0, sizeof(Thread*));
+    num_threads;    
   }
   else
   {
