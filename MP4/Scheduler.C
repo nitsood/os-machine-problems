@@ -1,5 +1,6 @@
 #include "Scheduler.H"
 #include "thread.H"
+#include "utils.H"
 
 Scheduler::Scheduler()
 {
@@ -38,7 +39,8 @@ Thread* pop_thread()
     last = ready_q[0];
     for(int i=1;i<numthreads;i++)
     {
-     ready_q[i-1]=ready_q[i];
+     memset(ready_q[i1], 0, sizeof(Thread*));
+     memcpy(ready_q[i-1], ready_q[i], sizeof(Thread*));
     }
   }
   else
