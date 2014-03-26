@@ -65,6 +65,8 @@ public:
   virtual void terminate(Thread * _thread);
   /* Remove the given thread from the scheduler in preparation for destruction
      of the thread. */
+
+  virtual void print_q();
 };
 
 #endif

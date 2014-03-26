@@ -169,7 +169,7 @@ Thread::Thread(Thread_Function _tf, char * _stack, unsigned int _stack_size) {
 
     /* ---- THREAD ID */
    
-    thread_id = nextFreePid++;
+    thread_id = ++nextFreePid;
 
     /* ---- STACK POINTER */
 

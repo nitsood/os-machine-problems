@@ -22,7 +22,7 @@
 
 /* -- COMMENT/UNCOMMENT THE FOLLOWING LINE TO EXCLUDE/INCLUDE SCHEDULER CODE */
 
-//#define _USES_SCHEDULER_
+#define _USES_SCHEDULER_
 /* This macro is defined when we want to force the code below to use
    a scheduler.
    Otherwise, no scheduler is used, and the threads pass control to each
@@ -48,12 +48,9 @@
 #include "irq.H"
 #include "exceptions.H"    
 #include "interrupts.H"
-
 #include "simple_timer.H"    /* TIMER MANAGEMENT  */
-
 #include "frame_pool.H"      /* MEMORY MANAGEMENT */
 #include "mem_pool.H"
-
 #include "thread.H"          /* THREAD MANAGEMENT */
 
 #ifdef _USES_SCHEDULER_
@@ -65,7 +62,6 @@
 /*--------------------------------------------------------------------------*/
 
 /* -- EXAMPLE OF THE DIVISION-BY-ZERO HANDLER */
-
 void dbz_handler(REGS * r) {
     Console::puts("DIVISION BY ZERO!\n");
     for(;;);
@@ -109,9 +105,9 @@ void pass_on_CPU(Thread * _to_thread) {
         /* We use a scheduler. Instead of dispatching to the next thread,
            we pre-empt the current thread by putting it onto the ready
            queue and yielding the CPU. */
-
-        SYSTEM_SCHEDULER->resume(thread_get_current());
+        SYSTEM_SCHEDULER->resume(Thread::CurrentThread());
         SYSTEM_SCHEDULER->yield();
+
 #endif
 }
 
@@ -119,10 +115,10 @@ void pass_on_CPU(Thread * _to_thread) {
 /* A FEW THREADS (pointer to TCB's and thread functions) */
 /*--------------------------------------------------------------------------*/
 
-Thread * thread1;
-Thread * thread2;
-Thread * thread3;
-Thread * thread4;
+Thread* thread1;
+Thread* thread2;
+Thread* thread3;
+Thread* thread4;
 
 /* -- THE 4 FUNCTIONS fun1 - fun4 ARE LARGELY IDENTICAL. */
 
@@ -235,7 +231,6 @@ int main() {
     init_interrupt_dispatcher();
 
     /* -- EXAMPLE OF AN EXCEPTION HANDLER -- */
-
     register_exception_handler(0, dbz_handler);
 
 
@@ -257,7 +252,6 @@ int main() {
     /* Question: Why do we want a timer? We have it to make sure that 
                  we enable interrupts correctly. If we forget to do it,
                  the timer "dies". */
-
     SimpleTimer::init(100); /* timer ticks every 10ms. */
     register_interrupt_handler(0, SimpleTimer::handler);
 
@@ -277,7 +271,6 @@ int main() {
              would get a lot of uncaptured interrupts otherwise. */ 
 
     /* -- ENABLE INTERRUPTS -- */
-
     machine_enable_interrupts();
 
     /* -- MOST OF WHAT WE NEED IS SETUP. THE KERNEL CAN START. */
