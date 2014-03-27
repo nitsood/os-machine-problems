@@ -28,6 +28,7 @@
 /*--------------------------------------------------------------------------*/
 
 #include "machine.H"
+//#include "Scheduler.H"
 
 /*--------------------------------------------------------------------------*/
 /* DATA STRUCTURES */
@@ -56,6 +57,8 @@ private:
 
     static int nextFreePid; /* Used to assign unique id's to threads. */
 
+    //static Scheduler* sch;
+    
     void push(unsigned long _val);
     /* Push the given value on the stack of the thread. */
 
@@ -63,7 +66,7 @@ private:
     /* Sets up the initial context for the given kernel-only thread. 
        The thread is supposed the call the function _tfunction upon start.
     */
- 
+
 public: 
     Thread(Thread_Function _tf, char * _stack, unsigned int _stack_size);
     /* Create a thread that is set up to execute the given thread function. 
@@ -84,6 +87,8 @@ public:
     static Thread * CurrentThread();
     /* Returns the currently running thread. NULL if no thread has started 
        yet. */
+    
+    //void set_scheduler(Scheduler* _sch);
 };
 
 #endif

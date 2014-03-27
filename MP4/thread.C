@@ -31,20 +31,23 @@
 #include "assert.H"
 #include "utils.H"
 #include "console.H"
-
 #include "frame_pool.H"
-
 #include "thread.H"
-
 #include "threads_low.H"
+#include "Scheduler.H"
 
 /*--------------------------------------------------------------------------*/
 /* EXTERNS */
 /*--------------------------------------------------------------------------*/
 
-Thread * current_thread = 0;
+Thread* current_thread = 0;
 /* Pointer to the currently running thread. This is used by the scheduler,
    for example. */
+
+/* Pointer to the Scheduler, which is defined elsewhere */
+extern Scheduler* SYSTEM_SCHEDULER;
+
+void operator delete (void* p);
 
 /* -------------------------------------------------------------------------*/
 /* LOCAL DATA PRIVATE TO THREAD AND DISPATCHER CODE */
@@ -73,8 +76,12 @@ static void thread_shutdown() {
        It terminates the thread by releasing memory and any other resources held by the thread. 
        This is a bit complicated because the thread termination interacts with the scheduler.
      */
+    Console::puts("Thread close called\n");
+    SYSTEM_SCHEDULER->terminate(current_thread);
+    delete current_thread;
+    SYSTEM_SCHEDULER->yield();
 
-    assert(FALSE);
+    //assert(FALSE);
     /* Let's not worry about it for now. 
        This means that we should have non-terminating thread functions. 
     */
@@ -84,6 +91,7 @@ static void thread_start() {
      /* This function is used to release the thread for execution in the ready queue. */
     
      /* We need to add code, but it is probably nothing more than enabling interrupts. */
+  Console::puts("Thread start called\n");
 }
 
 void Thread::setup_context(Thread_Function _tfunction){
@@ -210,3 +218,8 @@ Thread * Thread::CurrentThread() {
 /* Return the currently running thread. */
     return current_thread;
 }
+
+/*void Thread::set_scheduler(Scheduler* _sch)
+{
+  sch = _sch;
+}*/

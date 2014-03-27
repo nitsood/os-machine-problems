@@ -3,11 +3,15 @@
 #include "utils.H"
 #include "console.H"
 
+
 Scheduler::Scheduler()
 {
+  //Thread::set_scheduler(this);
+  
   ready_q = (Thread**)0x200000; //Ready queue starts at 2MB
   num_threads = 0;
 }
+
 
 void Scheduler::yield()
 {
@@ -18,8 +22,10 @@ void Scheduler::yield()
   //Console::puts("\n");
 
   //switch to the next thread
+  Console::puts("yielding\n");
   Thread::dispatch_to(next_th);
 }
+
 
 void Scheduler::resume(Thread* _thread)
 {
@@ -27,20 +33,29 @@ void Scheduler::resume(Thread* _thread)
   //print_q();
 }
 
+
 void Scheduler::add(Thread* _thread)
 {
   push_thread(_thread);
 }
 
+
 void Scheduler::terminate(Thread *_thread)
 {
+  Console::puts("Sch terminate called for thread ");
+  Console::puti(_thread->ThreadId());
+  Console::puts("\n");
+
+  print_q();
 }
 
-void Scheduler::push_thread(Thread* th)
+
+void Scheduler::push_thread(Thread* _th)
 {
-  ready_q[num_threads] = th;
+  ready_q[num_threads] = _th;
   num_threads++;
 }
+
 
 Thread* Scheduler::pop_thread()
 {
@@ -64,9 +79,32 @@ Thread* Scheduler::pop_thread()
   return last;
 }
 
+
+void Scheduler::remove(Thread* _th)
+{
+  print_q();
+  int i=0;
+  for(; i<num_threads; i++)
+  {
+    if(ready_q[i]->ThreadId() == _th->ThreadId())
+      break;
+  }
+ 
+  if(i == num_threads)
+    return;
+
+  ready_q[i] = 0;
+  Console::puts("Thread "); Console::puti(i); Console::puts(" removed from ready q\n");
+  for(i+=1; i<num_threads; i++)
+    ready_q[i-1] = ready_q[i];
+  ready_q[num_threads-1] = 0;
+  num_threads--;
+  print_q();
+}
+
 void Scheduler::print_q()
 {
-  Console::puts("ReadyQ ==> ");
+  Console::puts("ReadyQ ["); Console::puti(num_threads); Console::puts("] ==> ");
   for(int i=0; i<num_threads; i++)
   {
     Console::puti(ready_q[i]->ThreadId());

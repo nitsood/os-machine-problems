@@ -31,12 +31,20 @@ class Scheduler {
   /* number of threads currently in the ready queue */
   unsigned long num_threads;
 
+  /* Thread that is currently in execution, this thread does not exist on the ready queue 
+   * while it is running */
+  //Thread* running;
+
   /* ready queue for threads */
   Thread** ready_q;
 
+  /* enque a thread at the end of the ready queue */
   void push_thread(Thread* th);
 
+  /* deque a thread from the front of the ready queue */
   Thread* pop_thread();
+
+  void remove(Thread* th);
 
 public:
 

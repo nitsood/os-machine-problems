@@ -32,7 +32,7 @@
 
 /* -- UNCOMMENT THE FOLLOWING LINE TO MAKE THREADS TERMINATING */
 
-//#define _TERMINATING_FUNCTIONS_
+#define _TERMINATING_FUNCTIONS_
 /* This macro is defined when we want the thread functions to return, and so
    terminate their thread.
    Otherwise, the thread functions don't return, and the threads run forever.
@@ -72,10 +72,10 @@ void dbz_handler(REGS * r) {
 /*--------------------------------------------------------------------------*/
 
 /* -- A POOL OF FRAMES FOR THE SYSTEM TO USE */
-FramePool * SYSTEM_FRAME_POOL;
+FramePool* SYSTEM_FRAME_POOL;
 
 /* -- A POOL OF CONTIGUOUS MEMORY FOR THE SYSTEM TO USE */
-MemPool * MEMORY_POOL;
+MemPool* MEMORY_POOL;
 
 /*--------------------------------------------------------------------------*/
 /* SCHEDULER */
@@ -83,8 +83,8 @@ MemPool * MEMORY_POOL;
 
 #ifdef _USES_SCHEDULER_
 
-/* -- A POINTER TO THE SYSTEM SCHEDULER */
-Scheduler * SYSTEM_SCHEDULER;
+  /* -- A POINTER TO THE SYSTEM SCHEDULER */
+  Scheduler* SYSTEM_SCHEDULER;
 
 #endif
 
@@ -92,7 +92,7 @@ Scheduler * SYSTEM_SCHEDULER;
 /* JUST AN AUXILIARY FUNCTION */
 /*--------------------------------------------------------------------------*/
 
-void pass_on_CPU(Thread * _to_thread) {
+void pass_on_CPU(Thread* _to_thread) {
 
 #ifndef _USES_SCHEDULER_
 
@@ -106,6 +106,7 @@ void pass_on_CPU(Thread * _to_thread) {
            we pre-empt the current thread by putting it onto the ready
            queue and yielding the CPU. */
         SYSTEM_SCHEDULER->resume(Thread::CurrentThread());
+        SYSTEM_SCHEDULER->print_q();
         SYSTEM_SCHEDULER->yield();
 
 #endif
@@ -120,6 +121,12 @@ Thread* thread2;
 Thread* thread3;
 Thread* thread4;
 
+void delay()
+{
+  for(int i=0; i<5000000; i++)
+  {}
+}
+
 /* -- THE 4 FUNCTIONS fun1 - fun4 ARE LARGELY IDENTICAL. */
 
 void fun1() {
@@ -127,14 +134,15 @@ void fun1() {
     Console::puts("FUN 1 INVOKED!\n");
 
 #ifdef _TERMINATING_FUNCTIONS_
-    for(int j = 0; j < 10; j++) 
+    for(int j = 0; j < 1; j++) 
 #else
     for(int j = 0;; j++) 
 #endif
-    {	
+    {
+      delay();
         Console::puts("FUN 1 IN BURST["); Console::puti(j); Console::puts("]\n");
-        for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 1: TICK ["); Console::puti(i); Console::puts("]\n");
+        for (int i = 0; i < 1; i++) {
+            //Console::puts("FUN 1: TICK ["); Console::puti(i); Console::puts("]\n");
         }
         pass_on_CPU(thread2);
     }
@@ -146,14 +154,15 @@ void fun2() {
     Console::puts("FUN 2 INVOKED!\n");
 
 #ifdef _TERMINATING_FUNCTIONS_
-    for(int j = 0; j < 10; j++) 
+    for(int j = 0; j < 1; j++) 
 #else
     for(int j = 0;; j++) 
 #endif  
-    {		
+    {	
+      delay();
         Console::puts("FUN 2 IN BURST["); Console::puti(j); Console::puts("]\n");
-        for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 2: TICK ["); Console::puti(i); Console::puts("]\n");
+        for (int i = 0; i < 1; i++) {
+           // Console::puts("FUN 2: TICK ["); Console::puti(i); Console::puts("]\n");
         }
         pass_on_CPU(thread3);
     }
@@ -164,6 +173,7 @@ void fun3() {
     Console::puts("FUN 3 INVOKED!\n");
 
     for(int j = 0;; j++) {
+        delay();
         Console::puts("FUN 3 IN BURST["); Console::puti(j); Console::puts("]\n");
         for (int i = 0; i < 10; i++) {
 	    Console::puts("FUN 3: TICK ["); Console::puti(i); Console::puts("]\n");
@@ -177,6 +187,7 @@ void fun4() {
     Console::puts("FUN 4 INVOKED!\n");
 
     for(int j = 0;; j++) {
+        delay();
         Console::puts("FUN 4 IN BURST["); Console::puti(j); Console::puts("]\n");
         for (int i = 0; i < 10; i++) {
 	    Console::puts("FUN 4: TICK ["); Console::puti(i); Console::puts("]\n");
