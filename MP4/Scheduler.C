@@ -6,8 +6,6 @@
 
 Scheduler::Scheduler()
 {
-  //Thread::set_scheduler(this);
-  
   ready_q = (Thread**)0x200000; //Ready queue starts at 2MB
   num_threads = 0;
 }
@@ -47,9 +45,11 @@ void Scheduler::terminate(Thread *_thread)
   Console::puts("\n");
 
   print_q();
+  remove(_thread);
 }
 
 
+/* Adds a thread to the end of the ready queue */
 void Scheduler::push_thread(Thread* _th)
 {
   ready_q[num_threads] = _th;
@@ -57,6 +57,7 @@ void Scheduler::push_thread(Thread* _th)
 }
 
 
+/* Removes a thread from the front of the ready queue */
 Thread* Scheduler::pop_thread()
 {
   Thread* last;
@@ -80,9 +81,13 @@ Thread* Scheduler::pop_thread()
 }
 
 
+/* Removes a thread from the ready queue if it still exists in the queue.
+ * It can happen that the thread was killed explicitly while it was waiting 
+ * to get CPU. This is when this method will be used. If the thread dies naturally
+ * it won't exist in the ready queue anyway. */
 void Scheduler::remove(Thread* _th)
 {
-  print_q();
+  //print_q();
   int i=0;
   for(; i<num_threads; i++)
   {
@@ -90,6 +95,7 @@ void Scheduler::remove(Thread* _th)
       break;
   }
  
+  //thread not found in queue, nothing else to be done
   if(i == num_threads)
     return;
 
@@ -97,11 +103,14 @@ void Scheduler::remove(Thread* _th)
   Console::puts("Thread "); Console::puti(i); Console::puts(" removed from ready q\n");
   for(i+=1; i<num_threads; i++)
     ready_q[i-1] = ready_q[i];
+
   ready_q[num_threads-1] = 0;
   num_threads--;
   print_q();
 }
 
+
+/* Debug method */
 void Scheduler::print_q()
 {
   Console::puts("ReadyQ ["); Console::puti(num_threads); Console::puts("] ==> ");

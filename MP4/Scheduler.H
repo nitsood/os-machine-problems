@@ -44,6 +44,7 @@ class Scheduler {
   /* deque a thread from the front of the ready queue */
   Thread* pop_thread();
 
+  /* remove a thread from the ready queue if it exists anywhere within it */
   void remove(Thread* th);
 
 public:
