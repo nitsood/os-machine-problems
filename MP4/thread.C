@@ -219,7 +219,3 @@ Thread * Thread::CurrentThread() {
     return current_thread;
 }
 
-/*void Thread::set_scheduler(Scheduler* _sch)
-{
-  sch = _sch;
-}*/
